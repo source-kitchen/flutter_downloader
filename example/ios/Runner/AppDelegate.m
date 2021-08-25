@@ -5,9 +5,7 @@
 @implementation AppDelegate
 
 void registerPlugins(NSObject<FlutterPluginRegistry>* registry) {
-    if (![registry hasPlugin:@"FlutterDownloaderPlugin"]) {
-        [FlutterDownloaderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterDownloaderPlugin"]];
-    }
+    [GeneratedPluginRegistrant registerWithRegistry:registry];
 }
 
 - (BOOL)application:(UIApplication *)application
