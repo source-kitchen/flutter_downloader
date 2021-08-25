@@ -1,11 +1,11 @@
-import 'dart:isolate';
-import 'dart:ui';
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 const debug = true;
@@ -47,63 +47,33 @@ class MyHomePage extends StatefulWidget with WidgetsBindingObserver {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool wifiOnly = false;
   final _documents = [
-    {
-      'name': 'Learning Android Studio',
-      'link':
-          'http://barbra-coco.dyndns.org/student/learning_android_studio.pdf'
-    },
-    {
-      'name': 'Android Programming Cookbook',
-      'link':
-          'http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf'
-    },
-    {
-      'name': 'iOS Programming Guide',
-      'link':
-          'http://darwinlogic.com/uploads/education/iOS_Programming_Guide.pdf'
-    },
-    {
-      'name': 'Objective-C Programming (Pre-Course Workbook',
-      'link':
-          'https://www.bignerdranch.com/documents/objective-c-prereading-assignment.pdf'
-    },
+    {'name': 'Learning Android Studio', 'link': 'http://barbra-coco.dyndns.org/student/learning_android_studio.pdf'},
+    {'name': 'Android Programming Cookbook', 'link': 'http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf'},
+    {'name': 'iOS Programming Guide', 'link': 'http://darwinlogic.com/uploads/education/iOS_Programming_Guide.pdf'},
+    {'name': 'Objective-C Programming (Pre-Course Workbook', 'link': 'https://www.bignerdranch.com/documents/objective-c-prereading-assignment.pdf'},
   ];
 
   final _images = [
     {
       'name': 'Arches National Park',
-      'link':
-          'https://upload.wikimedia.org/wikipedia/commons/6/60/The_Organ_at_Arches_National_Park_Utah_Corrected.jpg'
+      'link': 'https://upload.wikimedia.org/wikipedia/commons/6/60/The_Organ_at_Arches_National_Park_Utah_Corrected.jpg'
     },
     {
       'name': 'Canyonlands National Park',
-      'link':
-          'https://upload.wikimedia.org/wikipedia/commons/7/78/Canyonlands_National_Park%E2%80%A6Needles_area_%286294480744%29.jpg'
+      'link': 'https://upload.wikimedia.org/wikipedia/commons/7/78/Canyonlands_National_Park%E2%80%A6Needles_area_%286294480744%29.jpg'
     },
     {
       'name': 'Death Valley National Park',
-      'link':
-          'https://upload.wikimedia.org/wikipedia/commons/b/b2/Sand_Dunes_in_Death_Valley_National_Park.jpg'
+      'link': 'https://upload.wikimedia.org/wikipedia/commons/b/b2/Sand_Dunes_in_Death_Valley_National_Park.jpg'
     },
-    {
-      'name': 'Gates of the Arctic National Park and Preserve',
-      'link':
-          'https://upload.wikimedia.org/wikipedia/commons/e/e4/GatesofArctic.jpg'
-    }
+    {'name': 'Gates of the Arctic National Park and Preserve', 'link': 'https://upload.wikimedia.org/wikipedia/commons/e/e4/GatesofArctic.jpg'}
   ];
 
   final _videos = [
-    {
-      'name': 'Big Buck Bunny',
-      'link':
-          'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-    },
-    {
-      'name': 'Elephant Dream',
-      'link':
-          'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
-    }
+    {'name': 'Big Buck Bunny', 'link': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'},
+    {'name': 'Elephant Dream', 'link': 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'}
   ];
 
   List<_TaskInfo>? _tasks;
@@ -134,8 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _bindBackgroundIsolate() {
-    bool isSuccess = IsolateNameServer.registerPortWithName(
-        _port.sendPort, 'downloader_send_port');
+    bool isSuccess = IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
     if (!isSuccess) {
       _unbindBackgroundIsolate();
       _bindBackgroundIsolate();
@@ -163,14 +132,11 @@ class _MyHomePageState extends State<MyHomePage> {
     IsolateNameServer.removePortNameMapping('downloader_send_port');
   }
 
-  static void downloadCallback(
-      String id, DownloadTaskStatus status, int progress) {
+  static void downloadCallback(String id, DownloadTaskStatus status, int progress) {
     if (debug) {
-      print(
-          'Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
+      print('Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
     }
-    final SendPort send =
-        IsolateNameServer.lookupPortByName('downloader_send_port')!;
+    final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port')!;
     send.send([id, status, progress]);
   }
 
@@ -179,6 +145,24 @@ class _MyHomePageState extends State<MyHomePage> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title!),
+        actions: [
+          if (wifiOnly)
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    wifiOnly = false;
+                  });
+                },
+                icon: Icon(Icons.network_cell))
+          else
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    wifiOnly = true;
+                  });
+                },
+                icon: Icon(Icons.wifi)),
+        ],
       ),
       body: Builder(
           builder: (context) => _isLoading
@@ -202,8 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onItemClick: (task) {
                         _openDownloadedFile(task).then((success) {
                           if (!success) {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text('Cannot open this file')));
+                            Scaffold.of(context).showSnackBar(SnackBar(content: Text('Cannot open this file')));
                           }
                         });
                       },
@@ -229,8 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Text(
           title,
-          style: TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 18.0),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 18.0),
         ),
       );
 
@@ -257,10 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   child: Text(
                     'Retry',
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0),
+                    style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 20.0),
                   ))
             ],
           ),
@@ -285,7 +264,8 @@ class _MyHomePageState extends State<MyHomePage> {
         headers: {"auth": "test_for_sql_encoding"},
         savedDir: _localPath,
         showNotification: true,
-        openFileFromNotification: true);
+        openFileFromNotification: true,
+        allowCellular: !wifiOnly);
   }
 
   void _cancelDownload(_TaskInfo task) async {
@@ -315,8 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _delete(_TaskInfo task) async {
-    await FlutterDownloader.remove(
-        taskId: task.taskId!, shouldDeleteContent: true);
+    await FlutterDownloader.remove(taskId: task.taskId!, shouldDeleteContent: true);
     await _prepare();
     setState(() {});
   }
@@ -345,8 +324,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _tasks = [];
     _items = [];
 
-    _tasks!.addAll(_documents.map((document) =>
-        _TaskInfo(name: document['name'], link: document['link'])));
+    _tasks!.addAll(_documents.map((document) => _TaskInfo(name: document['name'], link: document['link'])));
 
     _items.add(_ItemHolder(name: 'Documents'));
     for (int i = count; i < _tasks!.length; i++) {
@@ -354,8 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
       count++;
     }
 
-    _tasks!.addAll(_images
-        .map((image) => _TaskInfo(name: image['name'], link: image['link'])));
+    _tasks!.addAll(_images.map((image) => _TaskInfo(name: image['name'], link: image['link'])));
 
     _items.add(_ItemHolder(name: 'Images'));
     for (int i = count; i < _tasks!.length; i++) {
@@ -363,8 +340,7 @@ class _MyHomePageState extends State<MyHomePage> {
       count++;
     }
 
-    _tasks!.addAll(_videos
-        .map((video) => _TaskInfo(name: video['name'], link: video['link'])));
+    _tasks!.addAll(_videos.map((video) => _TaskInfo(name: video['name'], link: video['link'])));
 
     _items.add(_ItemHolder(name: 'Videos'));
     for (int i = count; i < _tasks!.length; i++) {
@@ -394,8 +370,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _prepareSaveDir() async {
-    _localPath =
-        (await _findLocalPath())! + Platform.pathSeparator + 'Download';
+    _localPath = (await _findLocalPath())! + Platform.pathSeparator + 'Download';
 
     final savedDir = Directory(_localPath);
     bool hasExisted = await savedDir.exists();
@@ -405,9 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<String?> _findLocalPath() async {
-    final directory = widget.platform == TargetPlatform.android
-        ? await getExternalStorageDirectory()
-        : await getApplicationDocumentsDirectory();
+    final directory = widget.platform == TargetPlatform.android ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
     return directory?.path;
   }
 }
@@ -452,8 +425,7 @@ class DownloadItem extends StatelessWidget {
                 ],
               ),
             ),
-            data!.task!.status == DownloadTaskStatus.running ||
-                    data!.task!.status == DownloadTaskStatus.paused
+            data!.task!.status == DownloadTaskStatus.running || data!.task!.status == DownloadTaskStatus.paused
                 ? Positioned(
                     left: 0.0,
                     right: 0.0,
