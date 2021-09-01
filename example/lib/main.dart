@@ -4,9 +4,9 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sk_flutter_downloader/sk_flutter_downloader.dart';
 
 const debug = true;
 

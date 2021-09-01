@@ -13,7 +13,7 @@
 /// manually or querying task data with SQL statements easily.
 ///
 
-library flutter_downloader;
+library sk_flutter_downloader;
 
 export 'src/downloader.dart';
 export 'src/models.dart';

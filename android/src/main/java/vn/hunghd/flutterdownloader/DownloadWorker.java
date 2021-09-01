@@ -87,7 +87,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
     private final Pattern filenameStarPattern = Pattern.compile("(?i)\\bfilename\\*=([^']+)'([^']*)'\"?([^\"]+)\"?");
     private final Pattern filenamePattern = Pattern.compile("(?i)\\bfilename=\"?([^\"]+)\"?");
 
-    private MethodChannel backgroundChannel;
+    private static MethodChannel backgroundChannel;
     private TaskDbHelper dbHelper;
     private TaskDao taskDao;
     private boolean showNotification;

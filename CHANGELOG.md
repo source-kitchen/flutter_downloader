@@ -1,3 +1,13 @@
+## 1.6.1-sk.3 - 01-09-2021
+* Prevent NullPointerExceptions when dealing with isolates
+
+## 1.6.1-sk.2 - 26-08-2021
+* Properly apply package renaming to iOS and example
+
+## 1.6.1-sk.1 - 26-08-2021
+* Add wifi-only flag so that downloads only happen with a wifi connection
+* Enable plugins in background isolate
+
 ## 1.6.1 - 29-05-2021
 
 * fix bug on Android: `getContentLength`

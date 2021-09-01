@@ -2,7 +2,7 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
-  s.name             = 'flutter_downloader'
+  s.name             = 'sk_flutter_downloader'
   s.version          = '0.0.1'
   s.summary          = 'A plugin to create and manage bankground download tasks'
   s.description      = <<-DESC
